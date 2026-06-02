@@ -18,6 +18,14 @@ pub enum SessionStore {
     File,
 }
 
+pub fn default_session_store() -> SessionStore {
+    session_file_path()
+        .ok()
+        .as_deref()
+        .map(default_session_store_for_path)
+        .unwrap_or(SessionStore::Keyring)
+}
+
 pub fn store_session(store: SessionStore, session: &Session) -> Result<()> {
     match store {
         SessionStore::Keyring => store_keyring_session(session),
@@ -112,6 +120,14 @@ fn session_file_path() -> Result<PathBuf> {
     }
 
     Ok(platform_config_dir()?.join("asfml").join("session.json"))
+}
+
+fn default_session_store_for_path(path: &Path) -> SessionStore {
+    if path.exists() {
+        SessionStore::File
+    } else {
+        SessionStore::Keyring
+    }
 }
 
 #[cfg(target_os = "windows")]
@@ -231,7 +247,7 @@ mod tests {
 
     use crate::models::Session;
 
-    use super::{load_file_session_at, store_file_session_at};
+    use super::{default_session_store_for_path, load_file_session_at, store_file_session_at};
 
     #[test]
     fn store_and_load_file_session() {
@@ -243,6 +259,23 @@ mod tests {
         store_file_session_at(&path, &session).unwrap();
         let loaded = load_file_session_at(&path).unwrap();
         assert_eq!(loaded.ponymail, session.ponymail);
+
+        cleanup_test_path(path);
+    }
+
+    #[test]
+    fn default_store_uses_file_when_session_file_exists() {
+        let path = unique_test_path();
+
+        assert_eq!(
+            default_session_store_for_path(&path),
+            super::SessionStore::Keyring
+        );
+        fs::write(&path, "{}").unwrap();
+        assert_eq!(
+            default_session_store_for_path(&path),
+            super::SessionStore::File
+        );
 
         cleanup_test_path(path);
     }
@@ -265,14 +298,17 @@ mod tests {
     }
 
     fn unique_test_path() -> PathBuf {
+        static NEXT_ID: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
         let mut path = std::env::temp_dir();
         path.push(format!(
-            "asfml-session-{}-{}",
+            "asfml-session-{}-{}-{}",
             std::process::id(),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
-                .as_nanos()
+                .as_nanos(),
+            NEXT_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
         ));
         fs::create_dir_all(&path).unwrap();
         path.push("session.json");

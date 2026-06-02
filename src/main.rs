@@ -3,8 +3,8 @@ mod output;
 use std::io::{self, IsTerminal, Read};
 
 use asfml_core::{
-    Error, ListAddress, PonyMailClient, Result, Session, SessionStore, clear_session, load_session,
-    parse_ponymail_cookie, store_session, validate_session,
+    Error, ListAddress, PonyMailClient, Result, Session, SessionStore, clear_session,
+    default_session_store, load_session, parse_ponymail_cookie, store_session, validate_session,
 };
 use clap::{Args, Parser, Subcommand, ValueEnum};
 
@@ -127,8 +127,8 @@ fn run() -> Result<()> {
     let store = cli
         .store
         .or_else(default_store_from_env)
-        .unwrap_or(StoreArg::Keyring)
-        .into_store();
+        .map(StoreArg::into_store)
+        .unwrap_or_else(default_session_store);
     match cli.command {
         Command::Auth(command) => handle_auth(command, store),
         Command::List(command) => handle_list(command, store),

@@ -49,9 +49,8 @@ The CLI accepts:
 Only the `ponymail` cookie for `lists.apache.org` is retained. Other cookies are
 discarded.
 
-The cookie is stored in the system keyring under the service/account pair used
-by `asfml` for `lists.apache.org`. It must never be printed in logs or error
-messages.
+The cookie is stored either in the system keyring or in an explicit file-backed
+session store. It must never be printed in logs or error messages.
 
 ## Authentication Commands
 
@@ -61,7 +60,10 @@ asfml auth status [<list@domain>]
 asfml auth clear
 ```
 
-Session storage defaults to the system keyring:
+Session storage defaults to auto-detection:
+
+- if the default file-backed session exists, use the file store
+- otherwise, use the system keyring
 
 ```shell
 asfml auth set
@@ -110,7 +112,7 @@ Logged in as Xuanwo <xuanwo@apache.org>.
 GET https://lists.apache.org/api/preferences.lua
 ```
 
-It must verify the remote session, not only local keyring state.
+It must verify the remote session, not only local session-store state.
 
 When a list address is provided, it must also check that the requested list is
 visible to the session. This is required because private list searches can
@@ -306,8 +308,7 @@ Run with `--debug` to save the raw response.
 ```text
 crates/asfml-core/
   src/lib.rs       # public core API
-  src/auth.rs      # keyring-backed session storage
-                   # and explicit file-store fallback
+  src/auth.rs      # keyring-backed and file-backed session storage
   src/cookie.rs    # cookie parsing
   src/client.rs    # Pony Mail API client
   src/models.rs    # stable asfml data models and thread relation logic
@@ -344,7 +345,7 @@ separate. This keeps future auth changes local to the auth layer.
 - `reqwest` for HTTP
 - `serde` and `serde_json` for data models
 - `url` for URL construction
-- `keyring` for session storage
+- `keyring` for keyring-backed session storage
 - `thiserror` for typed errors
 - `comfy-table` for table output
 - `rpassword` for hidden cookie input
