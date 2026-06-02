@@ -8,43 +8,18 @@ use crate::client::PonyMailClient;
 use crate::error::{Error, Result};
 use crate::models::{ListAddress, Session};
 
-const KEYRING_SERVICE: &str = "asfml";
-const KEYRING_ACCOUNT: &str = "lists.apache.org";
 const SESSION_FILE_ENV: &str = "ASFML_SESSION_FILE";
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub enum SessionStore {
-    Keyring,
-    File,
+pub fn store_session(session: &Session) -> Result<()> {
+    store_file_session(session)
 }
 
-pub fn default_session_store() -> SessionStore {
-    session_file_path()
-        .ok()
-        .as_deref()
-        .map(default_session_store_for_path)
-        .unwrap_or(SessionStore::Keyring)
+pub fn load_session() -> Result<Session> {
+    load_file_session()
 }
 
-pub fn store_session(store: SessionStore, session: &Session) -> Result<()> {
-    match store {
-        SessionStore::Keyring => store_keyring_session(session),
-        SessionStore::File => store_file_session(session),
-    }
-}
-
-pub fn load_session(store: SessionStore) -> Result<Session> {
-    match store {
-        SessionStore::Keyring => load_keyring_session(),
-        SessionStore::File => load_file_session(),
-    }
-}
-
-pub fn clear_session(store: SessionStore) -> Result<()> {
-    match store {
-        SessionStore::Keyring => clear_keyring_session(),
-        SessionStore::File => clear_file_session(),
-    }
+pub fn clear_session() -> Result<()> {
+    clear_file_session()
 }
 
 pub fn validate_session(client: &PonyMailClient, list: Option<&ListAddress>) -> Result<String> {
@@ -69,30 +44,6 @@ pub fn validate_session(client: &PonyMailClient, list: Option<&ListAddress>) -> 
         Some(ref email) if !email.is_empty() => format!("{name} <{email}>"),
         _ => name.to_string(),
     })
-}
-
-fn entry() -> Result<keyring::Entry> {
-    Ok(keyring::Entry::new(KEYRING_SERVICE, KEYRING_ACCOUNT)?)
-}
-
-fn store_keyring_session(session: &Session) -> Result<()> {
-    entry()?.set_password(&session.ponymail)?;
-    Ok(())
-}
-
-fn load_keyring_session() -> Result<Session> {
-    match entry()?.get_password() {
-        Ok(ponymail) => Ok(Session { ponymail }),
-        Err(keyring::Error::NoEntry) => Err(Error::NoSession),
-        Err(err) => Err(err.into()),
-    }
-}
-
-fn clear_keyring_session() -> Result<()> {
-    match entry()?.delete_credential() {
-        Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
-        Err(err) => Err(err.into()),
-    }
 }
 
 fn store_file_session(session: &Session) -> Result<()> {
@@ -120,14 +71,6 @@ fn session_file_path() -> Result<PathBuf> {
     }
 
     Ok(platform_config_dir()?.join("asfml").join("session.json"))
-}
-
-fn default_session_store_for_path(path: &Path) -> SessionStore {
-    if path.exists() {
-        SessionStore::File
-    } else {
-        SessionStore::Keyring
-    }
 }
 
 #[cfg(target_os = "windows")]
@@ -247,7 +190,7 @@ mod tests {
 
     use crate::models::Session;
 
-    use super::{default_session_store_for_path, load_file_session_at, store_file_session_at};
+    use super::{load_file_session_at, store_file_session_at};
 
     #[test]
     fn store_and_load_file_session() {
@@ -259,23 +202,6 @@ mod tests {
         store_file_session_at(&path, &session).unwrap();
         let loaded = load_file_session_at(&path).unwrap();
         assert_eq!(loaded.ponymail, session.ponymail);
-
-        cleanup_test_path(path);
-    }
-
-    #[test]
-    fn default_store_uses_file_when_session_file_exists() {
-        let path = unique_test_path();
-
-        assert_eq!(
-            default_session_store_for_path(&path),
-            super::SessionStore::Keyring
-        );
-        fs::write(&path, "{}").unwrap();
-        assert_eq!(
-            default_session_store_for_path(&path),
-            super::SessionStore::File
-        );
 
         cleanup_test_path(path);
     }

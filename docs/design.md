@@ -49,8 +49,8 @@ The CLI accepts:
 Only the `ponymail` cookie for `lists.apache.org` is retained. Other cookies are
 discarded.
 
-The cookie is stored either in the system keyring or in an explicit file-backed
-session store. It must never be printed in logs or error messages.
+The cookie is stored in a file-backed session store. It must never be printed in
+logs or error messages.
 
 ## Authentication Commands
 
@@ -60,28 +60,14 @@ asfml auth status [<list@domain>]
 asfml auth clear
 ```
 
-Session storage defaults to auto-detection:
-
-- if the default file-backed session exists, use the file store
-- otherwise, use the system keyring
-
 ```shell
 asfml auth set
 asfml auth status private@opendal.apache.org
 ```
 
-For Linux/headless environments without a Secret Service provider, use the file
-store explicitly:
-
-```shell
-asfml --store file auth set
-asfml --store file auth status private@opendal.apache.org
-asfml --store file list private@opendal.apache.org
-```
-
-`ASFML_SESSION_STORE=file` makes the file store the default for all commands.
-`ASFML_SESSION_FILE=/path/to/session.json` overrides the file-store path. Without
-`ASFML_SESSION_FILE`, the file store uses the platform configuration directory:
+`ASFML_SESSION_FILE=/path/to/session.json` overrides the session file path.
+Without `ASFML_SESSION_FILE`, the file store uses the platform configuration
+directory:
 
 - Linux: `$XDG_CONFIG_HOME/asfml/session.json` or `~/.config/asfml/session.json`
 - macOS: `~/Library/Application Support/asfml/session.json`
@@ -308,7 +294,7 @@ Run with `--debug` to save the raw response.
 ```text
 crates/asfml-core/
   src/lib.rs       # public core API
-  src/auth.rs      # keyring-backed and file-backed session storage
+  src/auth.rs      # file-backed session storage
   src/cookie.rs    # cookie parsing
   src/client.rs    # Pony Mail API client
   src/models.rs    # stable asfml data models and thread relation logic
@@ -345,7 +331,6 @@ separate. This keeps future auth changes local to the auth layer.
 - `reqwest` for HTTP
 - `serde` and `serde_json` for data models
 - `url` for URL construction
-- `keyring` for keyring-backed session storage
 - `thiserror` for typed errors
 - `comfy-table` for table output
 - `rpassword` for hidden cookie input

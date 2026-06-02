@@ -38,9 +38,6 @@ pub enum Error {
     #[error("URL construction failed: {0}")]
     Url(#[from] url::ParseError),
 
-    #[error("keyring operation failed: {0}")]
-    Keyring(#[from] keyring::Error),
-
     #[error("I/O failed: {0}")]
     Io(#[from] std::io::Error),
 
