@@ -383,13 +383,3 @@ ASFML_RUN_PUBLIC_API_TESTS=1 cargo test --test public_api
 
 Without that environment variable, integration tests do not access
 `lists.apache.org`.
-
-Private-list integration tests are separate and require a valid local session:
-
-```shell
-ASFML_RUN_PRIVATE_API_TESTS=1 cargo test --test private_api
-```
-
-These tests verify `auth status`, `list`, `search`, `read`, and `read --thread`
-against `private@opendal.apache.org`, but they do not print private message
-content.
