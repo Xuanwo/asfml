@@ -59,7 +59,15 @@ asfml auth status [<list@domain>]
 asfml auth clear
 ```
 
-`auth set` prompts for the cookie on stdin and then validates it.
+`auth set` prompts for one hidden input line when stdin is a terminal. If stdin
+is piped, it reads the full stdin stream, which supports importing Netscape
+cookies.txt content:
+
+```shell
+asfml auth set < cookies.txt
+```
+
+It then validates the session before storing it.
 
 Example success output:
 
