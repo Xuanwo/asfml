@@ -23,6 +23,9 @@ pub enum Error {
     #[error("invalid cookie input: {0}")]
     InvalidCookie(String),
 
+    #[error("could not determine a configuration directory")]
+    ConfigDirUnavailable,
+
     #[error("Pony Mail API response changed while reading {endpoint}: {reason}")]
     ApiShapeChanged {
         endpoint: &'static str,

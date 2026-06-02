@@ -61,6 +61,32 @@ asfml auth status [<list@domain>]
 asfml auth clear
 ```
 
+Session storage defaults to the system keyring:
+
+```shell
+asfml auth set
+asfml auth status private@opendal.apache.org
+```
+
+For Linux/headless environments without a Secret Service provider, use the file
+store explicitly:
+
+```shell
+asfml --store file auth set
+asfml --store file auth status private@opendal.apache.org
+asfml --store file list private@opendal.apache.org
+```
+
+`ASFML_SESSION_STORE=file` makes the file store the default for all commands.
+`ASFML_SESSION_FILE=/path/to/session.json` overrides the file-store path. Without
+`ASFML_SESSION_FILE`, the file store uses the platform configuration directory:
+
+- Linux: `$XDG_CONFIG_HOME/asfml/session.json` or `~/.config/asfml/session.json`
+- macOS: `~/Library/Application Support/asfml/session.json`
+- Windows: `%APPDATA%\asfml\session.json`
+
+On Unix, the session file is written with `0600` permissions.
+
 `auth set` prompts for one hidden input line when stdin is a terminal. If stdin
 is piped, it reads the full stdin stream, which supports importing Netscape
 cookies.txt content:
@@ -281,6 +307,7 @@ Run with `--debug` to save the raw response.
 crates/asfml-core/
   src/lib.rs       # public core API
   src/auth.rs      # keyring-backed session storage
+                   # and explicit file-store fallback
   src/cookie.rs    # cookie parsing
   src/client.rs    # Pony Mail API client
   src/models.rs    # stable asfml data models and thread relation logic

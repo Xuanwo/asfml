@@ -3,10 +3,10 @@ mod output;
 use std::io::{self, IsTerminal, Read};
 
 use asfml_core::{
-    Error, ListAddress, PonyMailClient, Result, Session, clear_session, load_session,
+    Error, ListAddress, PonyMailClient, Result, Session, SessionStore, clear_session, load_session,
     parse_ponymail_cookie, store_session, validate_session,
 };
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 
 use crate::output::{
     ReadFormat, TableFormat, print_email, print_error, print_summaries, print_thread,
@@ -18,8 +18,26 @@ use crate::output::{
     about = "Read Apache Pony Mail archives from lists.apache.org"
 )]
 struct Cli {
+    #[arg(long, global = true, value_enum)]
+    store: Option<StoreArg>,
+
     #[command(subcommand)]
     command: Command,
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq, ValueEnum)]
+enum StoreArg {
+    Keyring,
+    File,
+}
+
+impl StoreArg {
+    fn into_store(self) -> SessionStore {
+        match self {
+            StoreArg::Keyring => SessionStore::Keyring,
+            StoreArg::File => SessionStore::File,
+        }
+    }
 }
 
 #[derive(Debug, Subcommand)]
@@ -106,28 +124,33 @@ fn main() {
 
 fn run() -> Result<()> {
     let cli = Cli::parse();
+    let store = cli
+        .store
+        .or_else(default_store_from_env)
+        .unwrap_or(StoreArg::Keyring)
+        .into_store();
     match cli.command {
-        Command::Auth(command) => handle_auth(command),
-        Command::List(command) => handle_list(command),
-        Command::Search(command) => handle_search(command),
-        Command::Read(command) => handle_read(command),
+        Command::Auth(command) => handle_auth(command, store),
+        Command::List(command) => handle_list(command, store),
+        Command::Search(command) => handle_search(command, store),
+        Command::Read(command) => handle_read(command, store),
     }
 }
 
-fn handle_auth(command: AuthCommand) -> Result<()> {
+fn handle_auth(command: AuthCommand, store: SessionStore) -> Result<()> {
     match command.command {
         AuthSubcommand::Set => {
             let ponymail = read_cookie_from_stdin()?;
             let session = Session { ponymail };
             let client = PonyMailClient::new(Some(session.clone()))?;
             let user = validate_session(&client, None)?;
-            store_session(&session)?;
+            store_session(store, &session)?;
             println!("Stored session for lists.apache.org.");
             println!("Logged in as {user}.");
             Ok(())
         }
         AuthSubcommand::Status { list } => {
-            let session = load_session()?;
+            let session = load_session(store)?;
             let client = PonyMailClient::new(Some(session))?;
             let list = parse_optional_list(list)?;
             let user = validate_session(&client, list.as_ref())?;
@@ -138,29 +161,29 @@ fn handle_auth(command: AuthCommand) -> Result<()> {
             Ok(())
         }
         AuthSubcommand::Clear => {
-            clear_session()?;
+            clear_session(store)?;
             println!("Cleared session for lists.apache.org.");
             Ok(())
         }
     }
 }
 
-fn handle_list(command: ListCommand) -> Result<()> {
+fn handle_list(command: ListCommand, store: SessionStore) -> Result<()> {
     let list = ListAddress::parse(&command.list)?;
-    let client = client_for_list(&list)?;
+    let client = client_for_list(&list, store)?;
     let emails = client.list(&list, &command.since, command.limit)?;
     print_summaries(&emails, command.format)
 }
 
-fn handle_search(command: SearchCommand) -> Result<()> {
+fn handle_search(command: SearchCommand, store: SessionStore) -> Result<()> {
     let list = ListAddress::parse(&command.list)?;
-    let client = client_for_list(&list)?;
+    let client = client_for_list(&list, store)?;
     let emails = client.search(&list, &command.query, &command.since, command.limit)?;
     print_summaries(&emails, command.format)
 }
 
-fn handle_read(command: ReadCommand) -> Result<()> {
-    let client = client_with_optional_session()?;
+fn handle_read(command: ReadCommand, store: SessionStore) -> Result<()> {
+    let client = client_with_optional_session(store)?;
     if command.parent {
         let thread = client.thread(&command.mid)?;
         let parent = thread.direct_parent(&command.mid)?;
@@ -178,8 +201,8 @@ fn handle_read(command: ReadCommand) -> Result<()> {
     }
 }
 
-fn client_for_list(list: &ListAddress) -> Result<PonyMailClient> {
-    let session = match load_session() {
+fn client_for_list(list: &ListAddress, store: SessionStore) -> Result<PonyMailClient> {
+    let session = match load_session(store) {
         Ok(session) => Some(session),
         Err(Error::NoSession) => None,
         Err(error) => return Err(error),
@@ -195,8 +218,8 @@ fn client_for_list(list: &ListAddress) -> Result<PonyMailClient> {
     Err(Error::NoListAccess(list.to_string()))
 }
 
-fn client_with_optional_session() -> Result<PonyMailClient> {
-    let session = match load_session() {
+fn client_with_optional_session(store: SessionStore) -> Result<PonyMailClient> {
+    let session = match load_session(store) {
         Ok(session) => Some(session),
         Err(Error::NoSession) => None,
         Err(error) => return Err(error),
@@ -220,4 +243,12 @@ fn read_cookie_from_stdin() -> Result<String> {
     };
 
     parse_ponymail_cookie(&input)
+}
+
+fn default_store_from_env() -> Option<StoreArg> {
+    match std::env::var("ASFML_SESSION_STORE").ok()?.as_str() {
+        "keyring" => Some(StoreArg::Keyring),
+        "file" => Some(StoreArg::File),
+        _ => None,
+    }
 }
