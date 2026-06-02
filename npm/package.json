@@ -1,7 +1,16 @@
 {
   "name": "asfml",
   "version": "0.0.0-dev",
+  "description": "CLI for reading Apache Pony Mail archives",
   "license": "Apache-2.0",
+  "keywords": [
+    "apache",
+    "ponymail",
+    "mailing-list",
+    "email",
+    "cli"
+  ],
+  "homepage": "https://github.com/Xuanwo/asfml",
   "bin": {
     "asfml": "bin/asfml.js"
   },
@@ -15,5 +24,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Xuanwo/asfml.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Xuanwo/asfml/issues"
   }
 }

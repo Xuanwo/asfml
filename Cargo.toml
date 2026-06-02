@@ -9,7 +9,7 @@ rust-version.workspace = true
 description = "CLI for reading Apache Pony Mail archives"
 documentation = "https://docs.rs/asfml"
 readme = "README.md"
-keywords = ["apache", "ponymail", "mailing-list", "cli"]
+keywords = ["apache", "ponymail", "mailing-list", "email", "cli"]
 categories = ["command-line-utilities"]
 
 [workspace]

@@ -9,7 +9,7 @@ description = "CLI for reading Apache Pony Mail archives"
 readme = "README.md"
 requires-python = ">=3.8"
 license = "Apache-2.0"
-keywords = ["apache", "ponymail", "mailing-list", "cli"]
+keywords = ["apache", "ponymail", "mailing-list", "email", "cli"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",

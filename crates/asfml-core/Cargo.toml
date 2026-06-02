@@ -9,7 +9,7 @@ rust-version.workspace = true
 description = "Core library for reading Apache Pony Mail archives"
 documentation = "https://docs.rs/asfml-core"
 readme = "../../README.md"
-keywords = ["apache", "ponymail", "mailing-list", "archive"]
+keywords = ["apache", "ponymail", "mailing-list", "email", "archive"]
 categories = ["command-line-utilities", "api-bindings"]
 
 [dependencies]
