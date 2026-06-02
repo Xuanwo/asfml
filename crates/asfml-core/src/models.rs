@@ -235,6 +235,8 @@ fn format_epoch(epoch: Option<i64>) -> String {
 
 #[cfg(test)]
 mod tests {
+    use crate::error::Error;
+
     use super::{Email, ListAddress, StatsResponse, ThreadResponse};
 
     #[test]
@@ -313,6 +315,60 @@ mod tests {
                 .mid(),
             "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj"
         );
+    }
+
+    #[test]
+    fn parse_private_list_snapshot() {
+        let stats: StatsResponse = serde_json::from_str(include_str!(
+            "../tests/fixtures/private_opendal_list_snapshot.json"
+        ))
+        .unwrap();
+        assert_eq!(stats.emails.len(), 5);
+        assert_eq!(stats.emails[0].mid(), "private-list-mid-1");
+        assert_eq!(
+            stats.emails[0].list_name.as_deref(),
+            Some("<private.opendal.apache.org>")
+        );
+    }
+
+    #[test]
+    fn parse_private_search_snapshot() {
+        let stats: StatsResponse = serde_json::from_str(include_str!(
+            "../tests/fixtures/private_opendal_search_vote_snapshot.json"
+        ))
+        .unwrap();
+        assert_eq!(stats.emails.len(), 5);
+        assert_eq!(stats.emails[0].mid(), "private-search-mid-1");
+        assert_eq!(stats.emails[0].subject, "Private search subject 1");
+    }
+
+    #[test]
+    fn parse_private_reply_email_snapshot() {
+        let email: Email = serde_json::from_str(include_str!(
+            "../tests/fixtures/private_opendal_reply_email_snapshot.json"
+        ))
+        .unwrap();
+        assert_eq!(email.mid(), "private-reply-mid-1");
+        assert_eq!(
+            email.in_reply_to_key(),
+            Some("<private-missing-parent@example.invalid>")
+        );
+        assert!(email.body.contains("redacted"));
+    }
+
+    #[test]
+    fn private_reply_thread_snapshot_records_missing_parent() {
+        let thread: ThreadResponse = serde_json::from_str(include_str!(
+            "../tests/fixtures/private_opendal_reply_thread_snapshot.json"
+        ))
+        .unwrap();
+        assert_eq!(thread.emails.len(), 1);
+        let err = thread.direct_parent("private-reply-mid-1").unwrap_err();
+        assert!(matches!(
+            err,
+            Error::ParentNotFound { ref in_reply_to }
+                if in_reply_to == "<private-missing-parent@example.invalid>"
+        ));
     }
 
     fn email(id: &str, message_id: &str, in_reply_to: Option<&str>) -> Email {

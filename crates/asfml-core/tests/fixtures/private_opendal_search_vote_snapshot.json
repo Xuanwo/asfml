@@ -1,0 +1,44 @@
+{
+  "emails": [
+    {
+      "id": "private-search-mid-1",
+      "mid": "private-search-mid-1",
+      "subject": "Private search subject 1",
+      "from": "Private Search Sender 1 <private-search1@example.invalid>",
+      "epoch": 1749023676,
+      "list": "<private.opendal.apache.org>"
+    },
+    {
+      "id": "private-search-mid-2",
+      "mid": "private-search-mid-2",
+      "subject": "Private search subject 2",
+      "from": "Private Search Sender 2 <private-search2@example.invalid>",
+      "epoch": 1749548931,
+      "list": "<private.opendal.apache.org>"
+    },
+    {
+      "id": "private-search-mid-3",
+      "mid": "private-search-mid-3",
+      "subject": "Private search subject 3",
+      "from": "Private Search Sender 3 <private-search3@example.invalid>",
+      "epoch": 1749897537,
+      "list": "<private.opendal.apache.org>"
+    },
+    {
+      "id": "private-search-mid-4",
+      "mid": "private-search-mid-4",
+      "subject": "Private search subject 4",
+      "from": "Private Search Sender 4 <private-search4@example.invalid>",
+      "epoch": 1749905858,
+      "list": "<private.opendal.apache.org>"
+    },
+    {
+      "id": "private-search-mid-5",
+      "mid": "private-search-mid-5",
+      "subject": "Private search subject 5",
+      "from": "Private Search Sender 5 <private-search5@example.invalid>",
+      "epoch": 1750123820,
+      "list": "<private.opendal.apache.org>"
+    }
+  ]
+}

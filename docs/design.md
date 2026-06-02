@@ -368,6 +368,11 @@ checked-in public Pony Mail fixtures from `dev@opendal.apache.org`, including:
 - a single release discussion email
 - the thread containing that email
 
+They also include sanitized private-list snapshots derived from real
+`private@opendal.apache.org` accesses. These snapshots preserve response shape,
+list identity, and thread relation edge cases, but replace real ids, subjects,
+senders, message ids, and bodies with redacted values.
+
 Networked integration tests live in the top-level CLI test suite. They are
 controlled by `ASFML_RUN_PUBLIC_API_TESTS=1`:
 
@@ -377,3 +382,13 @@ ASFML_RUN_PUBLIC_API_TESTS=1 cargo test --test public_api
 
 Without that environment variable, integration tests do not access
 `lists.apache.org`.
+
+Private-list integration tests are separate and require a valid local session:
+
+```shell
+ASFML_RUN_PRIVATE_API_TESTS=1 cargo test --test private_api
+```
+
+These tests verify `auth status`, `list`, `search`, `read`, and `read --thread`
+against `private@opendal.apache.org`, but they do not print private message
+content.

@@ -1,0 +1,30 @@
+{
+  "thread": {
+    "id": "private-reply-mid-1",
+    "mid": "private-reply-mid-1",
+    "subject": "Re: Private redacted subject",
+    "from": "Private Sender <private@example.invalid>",
+    "date": null,
+    "epoch": 1749548931,
+    "list": "<private.opendal.apache.org>",
+    "body": "Private reply body redacted.\n\nQuoted private content redacted.\n",
+    "message-id": "<private-reply-1@example.invalid>",
+    "in-reply-to": "<private-missing-parent@example.invalid>",
+    "references": null
+  },
+  "emails": [
+    {
+      "id": "private-reply-mid-1",
+      "mid": "private-reply-mid-1",
+      "subject": "Re: Private redacted subject",
+      "from": "Private Sender <private@example.invalid>",
+      "date": null,
+      "epoch": 1749548931,
+      "list": "<private.opendal.apache.org>",
+      "body": "Private reply body redacted.\n\nQuoted private content redacted.\n",
+      "message-id": "<private-reply-1@example.invalid>",
+      "in-reply-to": "<private-missing-parent@example.invalid>",
+      "references": null
+    }
+  ]
+}
