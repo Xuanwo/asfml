@@ -1,0 +1,35 @@
+[build-system]
+requires = ["maturin>=1.8,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "asfml"
+dynamic = ["version"]
+description = "CLI for reading Apache Pony Mail archives"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "Apache-2.0"
+keywords = ["apache", "ponymail", "mailing-list", "cli"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Rust",
+  "Topic :: Communications :: Email",
+  "Topic :: Software Development",
+]
+
+[project.urls]
+Homepage = "https://github.com/Xuanwo/asfml"
+Repository = "https://github.com/Xuanwo/asfml"
+Issues = "https://github.com/Xuanwo/asfml/issues"
+
+[tool.maturin]
+bindings = "bin"
+manifest-path = "Cargo.toml"
+compatibility = "pypi"
+sdist-generator = "git"
+strip = true

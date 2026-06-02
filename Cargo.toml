@@ -1,15 +1,35 @@
 [package]
 name = "asfml"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+rust-version.workspace = true
+description = "CLI for reading Apache Pony Mail archives"
+documentation = "https://docs.rs/asfml"
+readme = "README.md"
+keywords = ["apache", "ponymail", "mailing-list", "cli"]
+categories = ["command-line-utilities"]
 
 [workspace]
 members = ["crates/asfml-core"]
 default-members = [".", "crates/asfml-core"]
 resolver = "3"
 
+[workspace.package]
+version = "0.0.0-dev"
+edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/Xuanwo/asfml"
+homepage = "https://github.com/Xuanwo/asfml"
+rust-version = "1.85"
+
+[workspace.dependencies]
+asfml-core = { version = "=0.0.0-dev", path = "crates/asfml-core" }
+
 [dependencies]
-asfml-core = { path = "crates/asfml-core" }
+asfml-core = { workspace = true }
 clap = { version = "4.5.40", features = ["derive"] }
 comfy-table = "7.1.4"
 rpassword = "7.4.0"

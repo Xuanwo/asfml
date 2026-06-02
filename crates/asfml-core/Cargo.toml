@@ -1,7 +1,16 @@
 [package]
 name = "asfml-core"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+rust-version.workspace = true
+description = "Core library for reading Apache Pony Mail archives"
+documentation = "https://docs.rs/asfml-core"
+readme = "../../README.md"
+keywords = ["apache", "ponymail", "mailing-list", "archive"]
+categories = ["command-line-utilities", "api-bindings"]
 
 [dependencies]
 chrono = { version = "0.4.41", default-features = false, features = ["clock", "serde"] }
