@@ -14,6 +14,23 @@ uv tool install asfml                       # Python / uv
 npm install -g asfml                        # npm
 ```
 
+## Quick Start
+
+Run `asfml` directly without installing it first:
+
+```bash
+uvx asfml list dev@opendal.apache.org --limit 5
+npx asfml list dev@opendal.apache.org --limit 5
+```
+
+Or use an installed binary:
+
+```bash
+asfml list dev@opendal.apache.org --limit 5
+asfml search dev@opendal.apache.org release --limit 5
+asfml read <mid>
+```
+
 ## Usage
 
 List recent messages:
