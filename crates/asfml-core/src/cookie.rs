@@ -13,6 +13,10 @@ pub fn parse_ponymail_cookie(input: &str) -> Result<String> {
         .or_else(|| normalized.strip_prefix("cookie:"))
         .unwrap_or(normalized);
 
+    if looks_like_cookie_value(normalized) {
+        return validate_cookie_value(normalized);
+    }
+
     for part in normalized.split(';') {
         let part = part.trim();
         if let Some((name, value)) = part.split_once('=') {
@@ -50,6 +54,13 @@ fn parse_netscape_cookie(input: &str) -> Option<String> {
     None
 }
 
+fn looks_like_cookie_value(input: &str) -> bool {
+    !input.is_empty()
+        && !input.contains('=')
+        && !input.contains(';')
+        && !input.contains(char::is_whitespace)
+}
+
 fn validate_cookie_value(value: &str) -> Result<String> {
     let value = value.trim();
     if value.is_empty() {
@@ -72,6 +83,12 @@ mod tests {
     #[test]
     fn parse_plain_cookie() {
         let cookie = parse_ponymail_cookie("ponymail=abc-123").unwrap();
+        assert_eq!(cookie, "abc-123");
+    }
+
+    #[test]
+    fn parse_bare_cookie_value() {
+        let cookie = parse_ponymail_cookie("abc-123").unwrap();
         assert_eq!(cookie, "abc-123");
     }
 

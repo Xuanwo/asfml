@@ -31,8 +31,9 @@ configuration, or mbox download.
 
 `asfml` uses a manually provided Pony Mail session cookie.
 
-The user logs in to `https://lists.apache.org` in a browser, copies either a
-`ponymail=<value>` cookie or a full `Cookie:` header, and pastes it into:
+The user logs in to `https://lists.apache.org` in a browser, copies either the
+raw `ponymail` cookie value, a `ponymail=<value>` cookie, or a full `Cookie:`
+header, and pastes it into:
 
 ```shell
 asfml auth set
@@ -41,6 +42,7 @@ asfml auth set
 The CLI accepts:
 
 - `ponymail=<value>`
+- `<value>`
 - `Cookie: ponymail=<value>; other=...`
 - Netscape cookies.txt content
 
