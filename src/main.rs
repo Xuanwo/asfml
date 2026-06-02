@@ -1,18 +1,13 @@
-mod auth;
-mod client;
-mod cookie;
-mod error;
-mod models;
 mod output;
 
+use std::io::{self, IsTerminal, Read};
+
+use asfml_core::{
+    Error, ListAddress, PonyMailClient, Result, Session, clear_session, load_session,
+    parse_ponymail_cookie, store_session, validate_session,
+};
 use clap::{Args, Parser, Subcommand};
 
-use crate::auth::{
-    clear_session, load_session, read_cookie_from_stdin, store_session, validate_session,
-};
-use crate::client::PonyMailClient;
-use crate::error::{Error, Result};
-use crate::models::{ListAddress, Session};
 use crate::output::{
     ReadFormat, TableFormat, print_email, print_error, print_summaries, print_thread,
 };
@@ -211,4 +206,18 @@ fn client_with_optional_session() -> Result<PonyMailClient> {
 
 fn parse_optional_list(list: Option<String>) -> Result<Option<ListAddress>> {
     list.as_deref().map(ListAddress::parse).transpose()
+}
+
+fn read_cookie_from_stdin() -> Result<String> {
+    let input = if io::stdin().is_terminal() {
+        rpassword::prompt_password(
+            "Paste Cookie header or ponymail cookie value from lists.apache.org: ",
+        )?
+    } else {
+        let mut input = String::new();
+        io::stdin().read_to_string(&mut input)?;
+        input
+    };
+
+    parse_ponymail_cookie(&input)
 }

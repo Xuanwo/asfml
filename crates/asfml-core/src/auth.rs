@@ -1,26 +1,9 @@
-use std::io::{self, IsTerminal, Read};
-
 use crate::client::PonyMailClient;
-use crate::cookie::parse_ponymail_cookie;
 use crate::error::{Error, Result};
 use crate::models::{ListAddress, Session};
 
 const KEYRING_SERVICE: &str = "asfml";
 const KEYRING_ACCOUNT: &str = "lists.apache.org";
-
-pub fn read_cookie_from_stdin() -> Result<String> {
-    let input = if io::stdin().is_terminal() {
-        rpassword::prompt_password(
-            "Paste Cookie header or ponymail cookie value from lists.apache.org: ",
-        )?
-    } else {
-        let mut input = String::new();
-        io::stdin().read_to_string(&mut input)?;
-        input
-    };
-
-    parse_ponymail_cookie(&input)
-}
 
 pub fn store_session(session: &Session) -> Result<()> {
     entry()?.set_password(&session.ponymail)?;

@@ -1,0 +1,20 @@
+{
+  "emails": [
+    {
+      "id": "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj",
+      "mid": "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj",
+      "subject": "[DISCUSS] Release Apache OpenDAL v0.57.0",
+      "from": "\"Xuanwo (via GitHub)\" <gi...@apache.org>",
+      "epoch": 1778513336,
+      "list": "<dev.opendal.apache.org>"
+    },
+    {
+      "id": "vphxj2j6hp7yb5hphj7p53cy2t44q5bm",
+      "mid": "vphxj2j6hp7yb5hphj7p53cy2t44q5bm",
+      "subject": "Re: Guidance on zip-like stores",
+      "from": "\"luanmm (via GitHub)\" <gi...@apache.org>",
+      "epoch": 1778856041,
+      "list": "<dev.opendal.apache.org>"
+    }
+  ]
+}

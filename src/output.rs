@@ -1,8 +1,7 @@
 use comfy_table::{Cell, Table, presets::UTF8_FULL};
 use serde::Serialize;
 
-use crate::error::{Error, Result};
-use crate::models::{Email, EmailSummary, ThreadResponse};
+use asfml_core::{Email, EmailSummary, Error, Result, ThreadResponse};
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, clap::ValueEnum)]
 pub enum TableFormat {

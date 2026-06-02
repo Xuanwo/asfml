@@ -1,0 +1,13 @@
+{
+  "id": "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj",
+  "mid": "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj",
+  "subject": "[DISCUSS] Release Apache OpenDAL v0.57.0",
+  "from": "\"Xuanwo (via GitHub)\" <gi...@apache.org>",
+  "date": "2026/05/11 15:28:56",
+  "epoch": 1778513336,
+  "list": "<dev.opendal.apache.org>",
+  "body": "\nGitHub user Xuanwo created a discussion: [DISCUSS] Release Apache OpenDAL v0.57.0\n\nHello, Apache OpenDAL Community,\n\nThis is a call for a discussion to release Apache OpenDAL version v0.57.0.\n\nThe change lists about this release:\n\nhttps://github.com/apache/opendal/compare/v0.56.0...main\n\nPlease leave your comments here about this release plan. We will bump the version in the repo and start the release process after the discussion.\n\nThanks\n\nXuanwo\n\n\nGitHub link: https://github.com/apache/opendal/discussions/7514\n\n----\nThis is an automatically sent email for dev@opendal.apache.org.\nTo unsubscribe, please send an email to: dev-unsubscribe@opendal.apache.org\n\n",
+  "message-id": "<ghd-D_kwDOG1wuLc4AmTjj@gitbox.apache.org>",
+  "in-reply-to": "",
+  "references": ""
+}

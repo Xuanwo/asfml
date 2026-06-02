@@ -1,0 +1,20 @@
+{
+  "emails": [
+    {
+      "id": "6rhj403fyfqoqzyv4201m53gqwkbqrvy",
+      "mid": "6rhj403fyfqoqzyv4201m53gqwkbqrvy",
+      "subject": "idea: Introducing Component Support Tiers for OpenDAL",
+      "from": "\"Xuanwo (via GitHub)\" <gi...@apache.org>",
+      "epoch": 1749032757,
+      "list": "<dev.opendal.apache.org>"
+    },
+    {
+      "id": "57z9kohn08gtfvn3nlhzg2pvoffcktj0",
+      "mid": "57z9kohn08gtfvn3nlhzg2pvoffcktj0",
+      "subject": "June 08, 2025: This Week in OpenDAL",
+      "from": "\"github-actions[bot] (via GitHub)\" <gi...@apache.org>",
+      "epoch": 1749342937,
+      "list": "<dev.opendal.apache.org>"
+    }
+  ]
+}

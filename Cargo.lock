@@ -65,12 +65,21 @@ dependencies = [
 name = "asfml"
 version = "0.1.0"
 dependencies = [
- "chrono",
+ "asfml-core",
  "clap",
  "comfy-table",
+ "rpassword",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "asfml-core"
+version = "0.1.0"
+dependencies = [
+ "chrono",
  "keyring",
  "reqwest",
- "rpassword",
  "serde",
  "serde_json",
  "thiserror",

@@ -235,7 +235,7 @@ fn format_epoch(epoch: Option<i64>) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{Email, ListAddress, ThreadResponse};
+    use super::{Email, ListAddress, StatsResponse, ThreadResponse};
 
     #[test]
     fn parse_list_address() {
@@ -259,6 +259,60 @@ mod tests {
 
         let root = thread.root_parent("grandchild").unwrap();
         assert_eq!(root.mid(), "root");
+    }
+
+    #[test]
+    fn parse_public_list_fixture() {
+        let stats: StatsResponse =
+            serde_json::from_str(include_str!("../tests/fixtures/opendal_dev_list_30d.json"))
+                .unwrap();
+        assert_eq!(stats.emails.len(), 2);
+        assert_eq!(stats.emails[0].mid(), "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj");
+        assert_eq!(
+            stats.emails[0].subject,
+            "[DISCUSS] Release Apache OpenDAL v0.57.0"
+        );
+    }
+
+    #[test]
+    fn parse_public_search_fixture() {
+        let stats: StatsResponse = serde_json::from_str(include_str!(
+            "../tests/fixtures/opendal_dev_search_release.json"
+        ))
+        .unwrap();
+        assert_eq!(stats.emails.len(), 2);
+        assert_eq!(stats.emails[0].mid(), "6rhj403fyfqoqzyv4201m53gqwkbqrvy");
+        assert!(stats.emails[0].subject.contains("Component Support Tiers"));
+    }
+
+    #[test]
+    fn parse_public_email_fixture() {
+        let email: Email =
+            serde_json::from_str(include_str!("../tests/fixtures/opendal_release_email.json"))
+                .unwrap();
+        assert_eq!(email.mid(), "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj");
+        assert_eq!(
+            email.message_id_key(),
+            Some("<ghd-D_kwDOG1wuLc4AmTjj@gitbox.apache.org>")
+        );
+        assert!(email.body.contains("call for a discussion"));
+    }
+
+    #[test]
+    fn parse_public_thread_fixture() {
+        let thread: ThreadResponse = serde_json::from_str(include_str!(
+            "../tests/fixtures/opendal_release_thread.json"
+        ))
+        .unwrap();
+        assert_eq!(thread.thread.mid(), "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj");
+        assert_eq!(thread.emails.len(), 1);
+        assert_eq!(
+            thread
+                .root_parent("qd7m1k6h9hmjt5hdqb28y3vzh561x3bj")
+                .unwrap()
+                .mid(),
+            "qd7m1k6h9hmjt5hdqb28y3vzh561x3bj"
+        );
     }
 
     fn email(id: &str, message_id: &str, in_reply_to: Option<&str>) -> Email {

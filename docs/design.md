@@ -276,17 +276,24 @@ Run with `--debug` to save the raw response.
 ## Rust Structure
 
 ```text
+crates/asfml-core/
+  src/lib.rs       # public core API
+  src/auth.rs      # keyring-backed session storage
+  src/cookie.rs    # cookie parsing
+  src/client.rs    # Pony Mail API client
+  src/models.rs    # stable asfml data models and thread relation logic
+  src/error.rs     # typed errors
+
 src/
-  main.rs          # clap dispatch
-  auth.rs          # keyring-backed session storage
-  cookie.rs        # cookie parsing
-  client.rs        # Pony Mail API client
-  models.rs        # stable asfml data models
+  main.rs          # clap dispatch and stdin interaction
   output.rs        # text/table/json rendering
-  error.rs         # typed errors
 ```
 
-The API client should depend on an already resolved session:
+All API access, authentication storage, cookie parsing, response models, and
+parent/root/thread resolution live in `asfml-core`. The top-level `asfml` crate
+is only the CLI surface.
+
+The API client depends on an already resolved session:
 
 ```rust
 pub struct Session {
@@ -321,3 +328,23 @@ separate. This keeps future auth changes local to the auth layer.
 - Do not accept cookies through normal command-line flags in the default flow.
 - Store only the `ponymail` cookie.
 - Validate session state with `preferences.lua` before relying on it.
+
+## Testing
+
+Unit tests live in `asfml-core` and always run with `cargo test`. They use
+checked-in public Pony Mail fixtures from `dev@opendal.apache.org`, including:
+
+- recent list results
+- `release` search results
+- a single release discussion email
+- the thread containing that email
+
+Networked integration tests live in the top-level CLI test suite. They are
+controlled by `ASFML_RUN_PUBLIC_API_TESTS=1`:
+
+```shell
+ASFML_RUN_PUBLIC_API_TESTS=1 cargo test --test public_api
+```
+
+Without that environment variable, integration tests do not access
+`lists.apache.org`.
